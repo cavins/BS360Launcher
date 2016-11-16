@@ -46,6 +46,7 @@ import com.ljw.device3x.adapter.ButtonViewAdapter;
 import com.ljw.device3x.adapter.ButtonViewLevel2Adapter;
 import com.ljw.device3x.adapter.ContentFragmentAdapter;
 import com.ljw.device3x.adapter.pagerAdapter;
+import com.ljw.device3x.common.CommonBroacastName;
 import com.ljw.device3x.common.CommonCtrl;
 import com.ljw.device3x.gpscontrol.MyGpsHardware;
 import com.ljw.device3x.gpscontrol.MyGpsListener;
@@ -95,6 +96,12 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         windowsActivity = this;
         setContentView(R.layout.float_window_setting);
         initView();
+        notifyFMAndBt();
+    }
+
+    private void notifyFMAndBt() {
+        Intent intent = new Intent(CommonBroacastName.NOTIFY_FM_BLUETOOTH);
+        sendBroadcast(intent);
     }
 
     /**

@@ -44,7 +44,7 @@ public class MobileStateView extends LinearLayout{
         connectivityManager = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         imageView = (ImageView) findViewById(R.id.mobileimage);
         textView = (TextView) findViewById(R.id.mobiletext);
-        imageView.setImageResource(getMobileDataStatus() ? R.mipmap.bluetooth_on : R.mipmap.mobiledata_off);
+        imageView.setImageResource(getMobileDataStatus() ? R.mipmap.mobiledata_on : R.mipmap.mobiledata_off);
         textView.setTextColor(getMobileDataStatus() ? context.getResources().getColor(R.color.white) : context.getResources().getColor(R.color.dark_text));
         imageView.setOnClickListener(new OnClickListener() {
             @Override

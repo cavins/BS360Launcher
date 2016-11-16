@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.ljw.device3x.R;
 import com.ljw.device3x.common.CommonBroacastName;
+import com.ljw.device3x.common.CommonCtrl;
 
 /**
  * Created by Administrator on 2016/5/4 0004.
@@ -137,10 +138,7 @@ public class WifiStateView extends LinearLayout{
         wifiImage.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mWifiManager.isWifiEnabled()) {
-                    mWifiManager.setWifiEnabled(false);
-                } else
-                    mWifiManager.setWifiEnabled(true);
+                setWifiEnabled(mWifiManager.isWifiEnabled());
             }
         });
 
@@ -162,6 +160,12 @@ public class WifiStateView extends LinearLayout{
     private void refreshButton() {
         wifiImage.setImageResource(mWifiManager.isWifiEnabled() ? R.mipmap.wifi_on : R.mipmap.wifi_off);
         wifiName.setTextColor(mWifiManager.isWifiEnabled() ? context.getResources().getColor(R.color.white) : context.getResources().getColor(R.color.dark_text));
+    }
+
+    private void setWifiEnabled(boolean enabled) {
+        if(CommonCtrl.isWifiApEnabled(context))
+            CommonCtrl.setWifiApEnabled(context, false);
+        mWifiManager.setWifiEnabled(enabled ? false : true);
     }
 
     @Override

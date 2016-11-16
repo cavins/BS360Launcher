@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ljw.device3x.R;
+import com.ljw.device3x.common.CommonCtrl;
 
 import java.lang.reflect.Method;
 
@@ -38,12 +39,12 @@ public class WifiApSateView extends LinearLayout{
         wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         imageView = (ImageView) findViewById(R.id.wifiapname);
         textView = (TextView) findViewById(R.id.wifiaptext);
-        imageView.setImageResource(isWifiApEnabled() ? R.mipmap.wifiap_on : R.mipmap.wifiap_off);
-        textView.setTextColor(isWifiApEnabled() ? context.getResources().getColor(R.color.white) : context.getResources().getColor(R.color.dark_text));
+        imageView.setImageResource(CommonCtrl.isWifiApEnabled(context) ? R.mipmap.wifiap_on : R.mipmap.wifiap_off);
+        textView.setTextColor(CommonCtrl.isWifiApEnabled(context) ? context.getResources().getColor(R.color.white) : context.getResources().getColor(R.color.dark_text));
         imageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                setWifiApEnabled(isWifiApEnabled() ? false : true);
+                setWifiApEnabled(CommonCtrl.isWifiApEnabled(context) ? false : true);
             }
         });
 
@@ -60,20 +61,20 @@ public class WifiApSateView extends LinearLayout{
     }
 
 
-    public boolean isWifiApEnabled() {
-        WifiManager mWifiManager = (WifiManager)getContext().getSystemService(Context.WIFI_SERVICE);
-        try {
-            Method method = mWifiManager.getClass().getMethod("isWifiApEnabled");
-            method.setAccessible(true);
-            return (Boolean) method.invoke(mWifiManager);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return false;
-    }
+//    public boolean isWifiApEnabled() {
+//        WifiManager mWifiManager = (WifiManager)getContext().getSystemService(Context.WIFI_SERVICE);
+//        try {
+//            Method method = mWifiManager.getClass().getMethod("isWifiApEnabled");
+//            method.setAccessible(true);
+//            return (Boolean) method.invoke(mWifiManager);
+//        } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+//        } catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
     // wifi热点开关
     public boolean setWifiApEnabled(boolean enabled) {
