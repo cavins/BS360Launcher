@@ -49,7 +49,7 @@ public class MobileStateView extends LinearLayout{
         imageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                    notifyToChangeMobile(MY_ASK_MOBILE, context, 0);
+                notifyToChangeMobile(MY_ASK_MOBILE, context, 0);
             }
         });
     }
@@ -82,26 +82,33 @@ public class MobileStateView extends LinearLayout{
         context.sendBroadcast(intent);
     }
 
-    private void refreshButton(String info) {
-        if("true".equals(info)) {
-            notifyToChangeMobile(MY_OPEN_MOBILE, getContext(), 1);
-            imageView.setImageResource(R.mipmap.mobiledata_off);
-            textView.setTextColor(context.getResources().getColor(R.color.dark_text));
-        }
-        else if("false".equals(info)) {
-            notifyToChangeMobile(MY_OPEN_MOBILE, getContext(), 0);
-            imageView.setImageResource(R.mipmap.mobiledata_on);
-            textView.setTextColor(context.getResources().getColor(R.color.white));
-        }
+    private void refreshButton() {
+//        if("true".equals(info)) {
+//            notifyToChangeMobile(MY_OPEN_MOBILE, getContext(), 1);
+//            imageView.setImageResource(R.mipmap.mobiledata_off);
+//            textView.setTextColor(context.getResources().getColor(R.color.dark_text));
+//        }
+//        else if("false".equals(info)) {
+//            notifyToChangeMobile(MY_OPEN_MOBILE, getContext(), 0);
+//            imageView.setImageResource(R.mipmap.mobiledata_on);
+//            textView.setTextColor(context.getResources().getColor(R.color.white));
+//        }
+        imageView.setImageResource(getMobileDataStatus() ? R.mipmap.mobiledata_on : R.mipmap.mobiledata_off);
+
+
     }
 
     private BroadcastReceiver MobileDataRecieve  = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(SYSTEM_MOBILE_STATE.equals(intent.getAction())) {
-                String info = intent.getStringExtra("systemstate");
-                Toast.makeText(getContext(), "收到系统移动网络广播是" + info, Toast.LENGTH_SHORT).show();
-                refreshButton(info);
+//            if(SYSTEM_MOBILE_STATE.equals(intent.getAction())) {
+//                String info = intent.getStringExtra("systemstate");
+//                Toast.makeText(getContext(), "收到系统移动网络广播是" + info, Toast.LENGTH_SHORT).show();
+//                refreshButton(info);
+//            }
+            if(ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
+                Log.i("ljwtest:", "移动网络已改变");
+                refreshButton();
             }
         }
     };
