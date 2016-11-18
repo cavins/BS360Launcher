@@ -17,10 +17,13 @@ package me.kaelaela.verticalviewpager;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import me.kaelaela.verticalviewpager.transforms.DefaultTransformer;
 
 public class VerticalViewPager extends ViewPager {
+    double downX = 0,downY=0;
+    double lastX = 0, lastY = 0;
 
     public VerticalViewPager(Context context) {
         this(context, null);
@@ -46,6 +49,37 @@ public class VerticalViewPager extends ViewPager {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         boolean intercept = super.onInterceptTouchEvent(swapTouchEvent(event));
+        downX = event.getRawX();
+        downY = event.getRawY();
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
+                lastX = downX;
+                lastY = downY;
+            }
+
+            case MotionEvent.ACTION_MOVE:{
+
+                double moveX = downX - lastX;
+                double absmoveX = Math.abs(downX - lastX);
+                double absmoveY = Math.abs(downY - lastY);
+
+                if(absmoveX != 0.000 && absmoveY != 0.000) {
+                    Log.i("ljwtest:", "X轴滑动的距离" + absmoveX);
+                    Log.i("ljwtest:", "Y轴滑动的距离" + absmoveY);
+                }
+
+                if(absmoveX > absmoveY && (absmoveX - absmoveY >= 1.00)) {
+                    Log.i("ljwtest:", "左右滑时位移差是" + (absmoveX - absmoveY));
+//                    return super.onInterceptTouchEvent(event);
+                    return false;
+                } else if(absmoveY > absmoveX) {
+                    Log.i("ljwtest:", "上下滑时位移差是" + (absmoveX - absmoveY));
+                    return true;
+                }
+
+            }
+        }
         //If not intercept, touch event should not be swapped.
         swapTouchEvent(event);
         return intercept;
