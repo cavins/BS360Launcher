@@ -16,5 +16,6 @@ public class AppPackageName {
     public static final String BLUETOOTH_APP = "com.conqueror.bluetoothphone";//蓝牙电话
     public static final String AUTORECORD_APP = "cn.conqueror.dvr";//行车记录仪
     public static final String UPDATE_SYSTEM_APP = "com.conqueror.systemupdate";//系统升级
+    public static final String FILE_MANAGER_APP = "com.mediatek.filemanager";
 
 }

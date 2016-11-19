@@ -87,6 +87,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     SeekBar brightSeekBar;
     SeekBar voiceSeekbar;
     View headView;
+    private ImageView quickSetTip;
     private int currentLevelPage = 0;
 
     private StorageManager storageManager;
@@ -174,6 +175,36 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         headView = navigationView.getHeaderView(0);
         navigationView.setNavigationItemSelectedListener(this);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                if(quickSetTip.getVisibility() == View.VISIBLE)
+                    quickSetTip.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                if(quickSetTip.getVisibility() == View.INVISIBLE)
+                    quickSetTip.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+            }
+        });
+        quickSetTip = (ImageView) findViewById(R.id.quick_set_tips);
+        quickSetTip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.openDrawer(Gravity.LEFT);
+            }
+        });
+
 
         myGpsHardware = new MyGpsHardware();
         myGpsHardware.open(this, new MyGpsListener() {

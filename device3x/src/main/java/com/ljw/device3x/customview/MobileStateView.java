@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 /**
  * Created by Administrator on 2016/8/19 0019.
  */
-public class MobileStateView extends LinearLayout{
+public class MobileStateView extends LinearLayout {
     private ConnectivityManager connectivityManager;
     private IntentFilter intentFilter;
     private ImageView imageView;
@@ -41,7 +41,7 @@ public class MobileStateView extends LinearLayout{
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.mobilestateview, this);
-        connectivityManager = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         imageView = (ImageView) findViewById(R.id.mobileimage);
         textView = (TextView) findViewById(R.id.mobiletext);
         imageView.setImageResource(getMobileDataStatus() ? R.mipmap.mobiledata_on : R.mipmap.mobiledata_off);
@@ -49,33 +49,29 @@ public class MobileStateView extends LinearLayout{
         imageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifyToChangeMobile(MY_ASK_MOBILE, context, 0);
+                notifyToChangeMobile(MY_OPEN_MOBILE, context, getMobileDataStatus() ? 1 : 0);
             }
         });
     }
 
     //获取移动数据开关状态
-    private boolean getMobileDataStatus()
-    {
-        ConnectivityManager mConnectivityManager = mConnectivityManager = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+    private boolean getMobileDataStatus() {
+        ConnectivityManager mConnectivityManager  = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         String methodName = "getMobileDataEnabled";
         Class cmClass = mConnectivityManager.getClass();
         Boolean isOpen = null;
 
-        try
-        {
+        try {
             Method method = cmClass.getMethod(methodName, null);
 
             isOpen = (Boolean) method.invoke(mConnectivityManager, null);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return isOpen;
     }
 
-    private void notifyToChangeMobile(String action,  Context context, int flag) {
+    private void notifyToChangeMobile(String action, Context context, int flag) {
         Intent intent = new Intent(action);
         intent.putExtra("openmobiledata", flag);
         Log.i("ljwtest:", action + "广播已发送,附加值是" + flag);
@@ -93,20 +89,18 @@ public class MobileStateView extends LinearLayout{
 //            imageView.setImageResource(R.mipmap.mobiledata_on);
 //            textView.setTextColor(context.getResources().getColor(R.color.white));
 //        }
-        imageView.setImageResource(getMobileDataStatus() ? R.mipmap.mobiledata_on : R.mipmap.mobiledata_off);
-
+        boolean mobileDataStatus = getMobileDataStatus();
+        imageView.setImageResource(mobileDataStatus ? R.mipmap.mobiledata_on : R.mipmap.mobiledata_off);
+        textView.setTextColor(mobileDataStatus ? context.getResources().getColor(R.color.white) : context.getResources().getColor(R.color.dark_text));
 
     }
 
-    private BroadcastReceiver MobileDataRecieve  = new BroadcastReceiver() {
+    private BroadcastReceiver MobileDataRecieve = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-//            if(SYSTEM_MOBILE_STATE.equals(intent.getAction())) {
-//                String info = intent.getStringExtra("systemstate");
-//                Toast.makeText(getContext(), "收到系统移动网络广播是" + info, Toast.LENGTH_SHORT).show();
-//                refreshButton(info);
-//            }
-            if(ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
+            if (SYSTEM_MOBILE_STATE.equals(intent.getAction())) {
+                refreshButton();
+            } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
                 Log.i("ljwtest:", "移动网络已改变");
                 refreshButton();
             }

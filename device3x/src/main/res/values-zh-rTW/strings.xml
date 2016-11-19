@@ -30,4 +30,6 @@
   <string name="level2_setting">設 置</string>
   <string name="level2_update">系統升級</string>
   <string name="level2_weather">天 氣</string>
+  <string name="level2_filemanager">檔案管理</string>
+
 </resources>

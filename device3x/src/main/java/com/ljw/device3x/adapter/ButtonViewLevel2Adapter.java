@@ -18,7 +18,7 @@ public class ButtonViewLevel2Adapter extends BaseAdapter {
     private int[] resourceArray;
     private int[] textViewArray;
     private LayoutInflater mLayoutInflater;
-    public static final int APP_PAGE_SIZE = 10;//装载的数据大小
+    public static final int APP_PAGE_SIZE = 11;//装载的数据大小
 
     private final class ViewHolder {
         public ImageLevel2Button ib;
