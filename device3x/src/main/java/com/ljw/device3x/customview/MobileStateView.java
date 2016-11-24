@@ -106,9 +106,8 @@ public class MobileStateView extends LinearLayout {
         }
     };
 
-    private boolean isMobileType() {
-        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-        return info.getType() == ConnectivityManager.TYPE_MOBILE;
+    public void openDataNetworkIfWifiIsClose() {
+        notifyToChangeMobile(MY_OPEN_MOBILE, context, getMobileDataStatus() ? 1 : 0);
     }
 
     @Override

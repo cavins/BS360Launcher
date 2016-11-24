@@ -50,10 +50,9 @@ public class WifiStateView extends LinearLayout{
             Log.i(TAG, "onReceive " + action);
             if (action.equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
                 //如果wifi没有连接成功，则显示wifi图标无连接的状�??
-//                if (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED) {
-//                    mWifiHandler.sendEmptyMessage(LEVEL_NONE);
-//                    return;
-//                }
+                if (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED) {
+                    Log.i("ljwtest:", "wifi已关闭");
+                }
                 refreshButton();
 
 
