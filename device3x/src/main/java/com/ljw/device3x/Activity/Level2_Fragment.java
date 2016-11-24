@@ -33,7 +33,7 @@ public class Level2_Fragment extends Fragment {
      * 二级菜单图标
      */
     private int[] level_2_image = {R.mipmap.btn_level2_navi, R.mipmap.btn_level2_record, R.mipmap.btn_level2_call, R.mipmap.btn_level2_music, R.mipmap.btn_level2_fm,
-            R.mipmap.btn_level2_internet, R.mipmap.btn_level2_aboutdevice, R.mipmap.btn_level2_setting, R.mipmap.btn_level2_update, R.mipmap.btn_level2_weather, R.mipmap.btn_level2_filemanager};
+            R.mipmap.btn_level2_internet, R.mipmap.btn_level2_aboutdevice, R.mipmap.btn_level2_setting, R.mipmap.btn_level2_update, R.mipmap.btn_level2_weather, R.mipmap.btn_level2_filemanager, R.mipmap.btn_level2_warn};
 
     /**
      * 去掉的没用的图标
@@ -48,7 +48,7 @@ public class Level2_Fragment extends Fragment {
 //            R.mipmap.text_level2_internet, R.mipmap.text_level2_aboutdevice, R.mipmap.text_level2_setting, R.mipmap.text_level2_update, R.mipmap.text_level2_weather,
 //            R.mipmap.text_level2_asistant};
     private int[] level_2_text = {R.string.level2_navi, R.string.level2_record, R.string.level2_phone, R.string.level2_music, R.string.level2_fm, R.string.level2_internet,
-            R.string.level2_about, R.string.level2_setting, R.string.level2_update, R.string.level2_weather, R.string.level2_filemanager};
+            R.string.level2_about, R.string.level2_setting, R.string.level2_update, R.string.level2_weather, R.string.level2_filemanager, R.string.level2_warn};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -133,6 +133,9 @@ public class Level2_Fragment extends Fragment {
                         break;
                     case 10:
                         openAppAndNotifyHomeChanged(AppPackageName.FILE_MANAGER_APP);
+                        break;
+                    case 11:
+                        openAppAndNotifyHomeChanged(AppPackageName.EDOG_APP);
                 }
             }
         });
