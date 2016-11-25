@@ -31,7 +31,7 @@ public class MyGpsHardware {
             //startActivityForResult(intent, 0);
             //locationManager = null;
         	//return false; // 这里不要返回false，这种情况下应该做成当用户打开gps后就自动监听gps，而不要重新打开
-        	Toast.makeText(context, "请先开启gps", Toast.LENGTH_LONG).show();
+//        	Toast.makeText(context, "请先开启gps", Toast.LENGTH_LONG).show();
         }
 
         this.listener = listener;

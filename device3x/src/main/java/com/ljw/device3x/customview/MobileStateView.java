@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ljw.device3x.R;
+import com.ljw.device3x.common.CommonBroacastName;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -53,6 +54,16 @@ public class MobileStateView extends LinearLayout {
             @Override
             public void onClick(View v) {
                 notifyToChangeMobile(MY_OPEN_MOBILE, context, getMobileDataStatus() ? 1 : 0);
+            }
+        });
+
+        imageView.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent=new Intent(CommonBroacastName.SYSTEM_WIFIWETTING);
+                intent.putExtra("jumptype", "mobileswitch");
+                context.startActivity(intent);
+                return false;
             }
         });
     }
