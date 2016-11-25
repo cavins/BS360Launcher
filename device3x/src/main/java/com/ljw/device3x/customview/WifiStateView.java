@@ -40,6 +40,7 @@ public class WifiStateView extends LinearLayout{
     WifiManager mWifiManager;
     ConnectivityManager mCM;
     Context context;
+    MobileStateView mobileStateView;
 
 
     private BroadcastReceiver mWifiStateReceiver = new BroadcastReceiver() {
@@ -52,6 +53,7 @@ public class WifiStateView extends LinearLayout{
                 //如果wifi没有连接成功，则显示wifi图标无连接的状�??
                 if (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED) {
                     Log.i("ljwtest:", "wifi已关闭");
+                    mobileStateView.openDataNetworkIfWifiIsClose();
                 }
                 refreshButton();
 
@@ -133,6 +135,8 @@ public class WifiStateView extends LinearLayout{
         wifiName.setTextColor(context.getResources().getColor(R.color.dark_text));
         mWifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
         mCM = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        mobileStateView = new MobileStateView(context);
 
         wifiImage.setOnClickListener(new OnClickListener() {
             @Override

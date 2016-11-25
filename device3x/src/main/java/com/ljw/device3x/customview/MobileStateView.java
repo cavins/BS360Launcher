@@ -34,6 +34,10 @@ public class MobileStateView extends LinearLayout {
     private static final String MY_ASK_MOBILE = "ljw_ask_mibiledata";
     private static final String SYSTEM_MOBILE_STATE = "ljw_system_mobilestate";
 
+    public MobileStateView(Context context) {
+        this(context, null);
+    }
+
     public MobileStateView(final Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
@@ -107,7 +111,8 @@ public class MobileStateView extends LinearLayout {
     };
 
     public void openDataNetworkIfWifiIsClose() {
-        notifyToChangeMobile(MY_OPEN_MOBILE, context, getMobileDataStatus() ? 1 : 0);
+        if(!getMobileDataStatus())
+            notifyToChangeMobile(MY_OPEN_MOBILE, context, 0);
     }
 
     @Override

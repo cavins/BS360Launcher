@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.ljw.device3x.R;
+
 import java.lang.ref.WeakReference;
 
 /**
