@@ -22,6 +22,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -344,6 +345,14 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         // 进度条绑定当前亮度
         brightSeekBar.setProgress(normal);
 
+        brightSeekBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+
         brightSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -421,6 +430,13 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         final int curvolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         voiceSeekbar.setMax(maxVolume);
         voiceSeekbar.setProgress(curvolume);
+        voiceSeekbar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
         voiceSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
