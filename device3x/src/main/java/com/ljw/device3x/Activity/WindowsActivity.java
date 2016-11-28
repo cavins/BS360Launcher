@@ -169,6 +169,8 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         intentFilter.addAction(SYNCMAP_FROM_SPEECH);
         intentFilter.addAction("com.bs360.synclaunchervol");
         intentFilter.addAction("com.bs360.synclauncherbri");
+        intentFilter.addAction("com.bs360.volchangefromspeech");
+        intentFilter.addAction("com.bs360.brichangefromspeech");
         registerReceiver(mRecieve, intentFilter);
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -327,9 +329,9 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             } else if (action.equals(SYNCMAP_FROM_SPEECH)) {
                 Log.i("ljwtest:", "收到的地图是" + intent.getStringExtra("maptype"));
                 Utils.setLocalMapType(intent.getStringExtra("maptype"), getApplicationContext());
-            } else if(action.equals("com.bs360.synclaunchervol")) {
+            } else if(action.equals("com.bs360.synclaunchervol") || action.equals("com.bs360.volchangefromspeech")) {
                 initVoiceSeekbar();
-            } else if(action.equals("com.bs360.synclauncherbri")) {
+            } else if(action.equals("com.bs360.synclauncherbri") || action.equals("com.bs360.brichangefromspeech")) {
                 initBrightSeekbar();
             }
         }
