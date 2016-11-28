@@ -155,10 +155,10 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="5dp"
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@mipmap/endview">
-    </View>
+        android:background="@mipmap/quick_set_close">
+    </ImageView>
 
 </LinearLayout>
