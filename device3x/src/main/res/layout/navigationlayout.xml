@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:text="安全预警"
                     android:layout_gravity="center"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/dark_text"/>
             </LinearLayout>
 
             <com.ljw.device3x.customview.FMStateView
@@ -156,9 +156,12 @@
     </LinearLayout>
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:id="@+id/quick_set_end"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
-        android:background="@mipmap/quick_set_close">
+        android:layout_gravity="center"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp">
     </ImageView>
 
 </LinearLayout>

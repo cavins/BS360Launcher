@@ -56,6 +56,8 @@ import com.ljw.device3x.service.LocationService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -74,6 +76,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     private static final String SD_CARD_IS_IN = "SD卡已插入";
     private static final String SD_CARD_IS_OUT = "SD卡已拔出";
     private static final String SD_CARD_PATH = "/storage/sdcard1";
+    private static final int EVENT_CLOSE_NAVIGATION = 0x100;
     private MyGpsHardware myGpsHardware;
     /**
      * 发送TTS语音播报广播
@@ -88,7 +91,11 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     SeekBar brightSeekBar;
     SeekBar voiceSeekbar;
     View headView;
+    private Timer timer;
+    private CloseDrawbleTimer closeDrawbleTimer;
+    private CloseDrawbleHandler closeDrawbleHandler;
     private ImageView quickSetTip;
+    private ImageView quickSetClose;
     private int currentLevelPage = 0;
 
     private StorageManager storageManager;
@@ -148,12 +155,14 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onStop() {
         super.onStop();
-        Utils.getInstance().notifyHomeChangedIcon(1);
+        log_i("launcher onstop");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        log_i("launcher onPause");
+        Utils.getInstance().notifyHomeChangedIcon(1);
     }
 
     /**
@@ -181,6 +190,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
+                quickSetClose.setImageResource(slideOffset < 1.0 ? R.mipmap.quick_set_arrow : R.mipmap.quick_set_close);
 
             }
 
@@ -188,12 +198,16 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             public void onDrawerOpened(View drawerView) {
                 if(quickSetTip.getVisibility() == View.VISIBLE)
                     quickSetTip.setVisibility(View.INVISIBLE);
+                startTimerAfterNaviOpen();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 if(quickSetTip.getVisibility() == View.INVISIBLE)
                     quickSetTip.setVisibility(View.VISIBLE);
+
+                if(timer != null && closeDrawbleTimer != null)
+                    closeDrawbleTimer.cancel();
             }
 
             @Override
@@ -205,6 +219,14 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             @Override
             public void onClick(View view) {
                 drawer.openDrawer(Gravity.LEFT);
+            }
+        });
+
+        quickSetClose = (ImageView)headView.findViewById(R.id.quick_set_end);
+        quickSetClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.closeDrawer(Gravity.LEFT);
             }
         });
 
@@ -253,6 +275,8 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             }
         });
 
+        closeDrawbleHandler = new CloseDrawbleHandler();
+        timer = new Timer(true);
         initVoiceSeekbar();
         initBrightSeekbar();
     }
@@ -268,6 +292,45 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         verticalViewPager.setCurrentItem(0);
         isArmOrSystem = true;
         level1_fragment.jumpIfLevel1SecondPageVisible();
+    }
+
+    /**
+     * 开启闹钟计时
+     */
+    private void startTimerAfterNaviOpen() {
+        if(timer != null && closeDrawbleTimer != null)
+            closeDrawbleTimer.cancel();
+        closeDrawbleTimer = new CloseDrawbleTimer();
+        timer.schedule(closeDrawbleTimer, 15000);
+    }
+
+    /**
+     * 闹钟handler
+     */
+    private class CloseDrawbleHandler extends android.os.Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if(msg.what == EVENT_CLOSE_NAVIGATION)
+                closeDrawble();
+        }
+    }
+
+    private void closeDrawble() {
+        if(drawer != null)
+            drawer.closeDrawer(Gravity.LEFT);
+    }
+
+    /**
+     * 闹钟到点提醒
+     */
+    class CloseDrawbleTimer extends TimerTask {
+
+        @Override
+        public void run() {
+            Message msg = closeDrawbleHandler.obtainMessage(EVENT_CLOSE_NAVIGATION);
+            msg.sendToTarget();
+        }
     }
 
     /**
