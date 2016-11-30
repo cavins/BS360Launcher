@@ -301,7 +301,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         if(timer != null && closeDrawbleTimer != null)
             closeDrawbleTimer.cancel();
         closeDrawbleTimer = new CloseDrawbleTimer();
-        timer.schedule(closeDrawbleTimer, 15000);
+        timer.schedule(closeDrawbleTimer, 30000);
     }
 
     /**

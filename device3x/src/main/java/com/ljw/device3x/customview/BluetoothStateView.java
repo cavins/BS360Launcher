@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ljw.device3x.R;
+import com.ljw.device3x.Utils.Utils;
+import com.ljw.device3x.common.AppPackageName;
 import com.ljw.device3x.common.CommonBroacastName;
 
 /**
@@ -44,6 +46,14 @@ public class BluetoothStateView extends LinearLayout {
                     closeBluetooth();
                 else
                     openBluetooth();
+            }
+        });
+        imageView.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(Utils.getInstance().isInstalled(AppPackageName.BLUETOOTH_APP))
+                    Utils.getInstance().openApplication(AppPackageName.BLUETOOTH_APP);
+                return false;
             }
         });
     }
