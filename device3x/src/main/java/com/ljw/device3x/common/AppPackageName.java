@@ -9,7 +9,7 @@ public class AppPackageName {
     public static final String KUWO_APP = "cn.kuwo.kwmusiccar";//车载酷我
     public static final String VIDEO_APP = "cn.kuwo.kwmusiccar";//视频回放
     public static final String BAIDUMAP_APP = "com.baidu.navi";//百度地图
-    public static final String GAODEMAP_APP = "com.autonavi.amapauto";//高德地图
+    public static final String GAODEMAP_APP = "com.autonavi.amapautolite";//高德地图
     public static final String GAODEMAP_APPLITE = "com.autonavi.amapautolite";//高德地图车镜版
     public static final String TIPS_APP = "com.ideal.studys";//语音备忘录
     public static final String WECHAT_APP = "com.example.webviewtest";//微信助手
