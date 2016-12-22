@@ -426,10 +426,10 @@ public class Level1_Fragment extends Fragment {
     /**
      * 跳转到天气界面
      */
-    private void goToWeatherView() {
-        Intent intent = new Intent(getActivity(), WeatherAcivity.class);
-        getActivity().startActivity(intent);
-    }
+//    private void goToWeatherView() {
+//        Intent intent = new Intent(getActivity(), WeatherAcivity.class);
+//        getActivity().startActivity(intent);
+//    }
 
     /**
      * 跳转到设置界面

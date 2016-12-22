@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -83,52 +84,53 @@ public class NetworkTypeView extends ImageView{
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if(ConnectivityManager.CONNECTIVITY_ACTION.equals(action) || "com.private.datanetwork.change".equals(action)) {
+            if("com.private.datanetwork.change".equals(action)) {
 //                Toast.makeText(context, "网络状态已改变", Toast.LENGTH_SHORT).show();
-                int type = getDataNetworkType();
-                networkTypeHandler.sendEmptyMessage(type);
+                int type = intent.getIntExtra("datanettype", -1);
+                networkTypeHandler.sendEmptyMessage(getDataNetworkType(type));
 //                setNetworkTypeIcon(type);
-            }
+            } else if("com.launcher.hidenettype".equals(action))
+                networkTypeHandler.sendEmptyMessage(-1);//在sim卡拔出后隐藏网络类型图标
         }
     };
 
-    private int getDataNetworkType() {
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    private int getDataNetworkType(int sysDataType) {
+//        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         // 如果不是wifi，则判断当前连接的是运营商的哪种网络2g、3g、4g等
         //获取当前网络类型，如果为空，返回无网络
-        NetworkInfo activeNetInfo = connManager.getActiveNetworkInfo();
-        if (activeNetInfo == null || !activeNetInfo.isAvailable()) {
-            return -1;
-        }
+//        NetworkInfo activeNetInfo = connManager.getActiveNetworkInfo();
+//        if (activeNetInfo == null || !activeNetInfo.isAvailable()) {
+//            return -1;
+//        }
 
-        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if (null != networkInfo) {
-            NetworkInfo.State state = networkInfo.getState();
-            String strSubTypeName = networkInfo.getSubtypeName();
-            if (null != state)
-                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING) {
-                    switch (activeNetInfo.getSubtype()) {
-                        //如果是2g类型
-                        case TelephonyManager.NETWORK_TYPE_GPRS: // 联通2g
-                        case TelephonyManager.NETWORK_TYPE_CDMA: // 电信2g
-                        case TelephonyManager.NETWORK_TYPE_EDGE: // 移动2g
-                        case TelephonyManager.NETWORK_TYPE_1xRTT:
-                        case TelephonyManager.NETWORK_TYPE_IDEN:
-                            return NETWORN_2G;
-                        //如果是3g类型
-                        case TelephonyManager.NETWORK_TYPE_EVDO_A: // 电信3g
-                        case TelephonyManager.NETWORK_TYPE_UMTS:
-                        case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                        case TelephonyManager.NETWORK_TYPE_HSDPA:
-                        case TelephonyManager.NETWORK_TYPE_HSUPA:
-                        case TelephonyManager.NETWORK_TYPE_HSPA:
-                        case TelephonyManager.NETWORK_TYPE_EVDO_B:
-                        case TelephonyManager.NETWORK_TYPE_EHRPD:
-                        case TelephonyManager.NETWORK_TYPE_HSPAP:
-                            return NETWORN_3G;
-                        //如果是4g类型
-                        case TelephonyManager.NETWORK_TYPE_LTE:
-                            return NETWORN_4G;
+//        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+//        if (null != networkInfo) {
+//            NetworkInfo.State state = networkInfo.getState();
+//            String strSubTypeName = networkInfo.getSubtypeName();
+//            if (null != state) {
+                //                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING) {
+                switch (sysDataType) {
+                    //如果是2g类型
+                    case TelephonyManager.NETWORK_TYPE_GPRS: // 联通2g
+                    case TelephonyManager.NETWORK_TYPE_CDMA: // 电信2g
+                    case TelephonyManager.NETWORK_TYPE_EDGE: // 移动2g
+                    case TelephonyManager.NETWORK_TYPE_1xRTT:
+                    case TelephonyManager.NETWORK_TYPE_IDEN:
+                        return NETWORN_2G;
+                    //如果是3g类型
+                    case TelephonyManager.NETWORK_TYPE_EVDO_A: // 电信3g
+                    case TelephonyManager.NETWORK_TYPE_UMTS:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                    case TelephonyManager.NETWORK_TYPE_HSDPA:
+                    case TelephonyManager.NETWORK_TYPE_HSUPA:
+                    case TelephonyManager.NETWORK_TYPE_HSPA:
+                    case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                    case TelephonyManager.NETWORK_TYPE_EHRPD:
+                    case TelephonyManager.NETWORK_TYPE_HSPAP:
+                        return NETWORN_3G;
+                    //如果是4g类型
+                    case TelephonyManager.NETWORK_TYPE_LTE:
+                        return NETWORN_4G;
 //                        default:
 //                            //中国移动 联通 电信 三种3G制式
 //                            if (strSubTypeName.equalsIgnoreCase("TD-SCDMA") || strSubTypeName.equalsIgnoreCase("WCDMA") || strSubTypeName.equalsIgnoreCase("CDMA2000")) {
@@ -136,9 +138,11 @@ public class NetworkTypeView extends ImageView{
 //                            } else {
 //                                return NETWORN_MOBILE;
 //                            }
-                    }
                 }
-        }
+//                }
+//            }
+
+//        }
         return -1;
     }
 
@@ -148,6 +152,7 @@ public class NetworkTypeView extends ImageView{
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         intentFilter.addAction("com.private.datanetwork.change");
+        intentFilter.addAction("com.launcher.hidenettype");
         getContext().registerReceiver(networkTypeReceive, intentFilter);
     }
 

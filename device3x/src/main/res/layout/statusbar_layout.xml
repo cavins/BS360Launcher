@@ -32,6 +32,13 @@
         android:layout_gravity="center"
         android:layout_marginLeft="10dp" />
 
+    <com.ljw.device3x.statusbar.MobileDataIOView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:visibility="gone"/>
+
     <com.ljw.device3x.statusbar.StatusBarGPRSStateView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

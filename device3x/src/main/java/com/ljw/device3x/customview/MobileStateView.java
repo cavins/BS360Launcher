@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,7 +54,9 @@ public class MobileStateView extends LinearLayout {
         imageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("ljwtest:", "getMobileDataStatus():" + getMobileDataStatus());
                 notifyToChangeMobile(MY_OPEN_MOBILE, context, getMobileDataStatus() ? 1 : 0);
+                refreshButton();
             }
         });
 

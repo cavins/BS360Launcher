@@ -1,14 +1,13 @@
 package com.ljw.device3x.Activity;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
+import android.database.ContentObserver;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Message;
 import android.os.storage.StorageManager;
 import android.provider.Settings;
@@ -16,50 +15,27 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.SlidingDrawer;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.util.Util;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
-import com.ljw.device3x.MainActivity;
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.Utils;
-import com.ljw.device3x.adapter.ButtonViewAdapter;
-import com.ljw.device3x.adapter.ButtonViewLevel2Adapter;
 import com.ljw.device3x.adapter.ContentFragmentAdapter;
-import com.ljw.device3x.adapter.pagerAdapter;
 import com.ljw.device3x.common.CommonBroacastName;
-import com.ljw.device3x.common.CommonCtrl;
 import com.ljw.device3x.gpscontrol.MyGpsHardware;
 import com.ljw.device3x.gpscontrol.MyGpsListener;
 import com.ljw.device3x.gpscontrol.MyLocation;
 import com.ljw.device3x.service.LocationService;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 import me.kaelaela.verticalviewpager.VerticalViewPager;
 
@@ -97,6 +73,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     private ImageView quickSetTip;
     private ImageView quickSetClose;
     private int currentLevelPage = 0;
+    private boolean isHomeDrawbleOpen = false;
 
     private StorageManager storageManager;
     @Override
@@ -106,12 +83,25 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         setContentView(R.layout.float_window_setting);
         initView();
         notifyFMAndBt();
+        /**注册监听系统亮度改变事件*/
+        this.getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),true, BrightnessMode);
+
     }
 
     private void notifyFMAndBt() {
         Intent intent = new Intent(CommonBroacastName.NOTIFY_FM_BLUETOOTH);
         sendBroadcast(intent);
     }
+    /**
+     * 时刻监听系统亮度改变事件
+     */
+    private ContentObserver BrightnessMode = new ContentObserver(new android.os.Handler()) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+//            super.onChange(selfChange, uri);
+            initBrightSeekbar();
+        }
+    };
 
     /**
      * @createDate
@@ -180,6 +170,9 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         intentFilter.addAction("com.bs360.synclauncherbri");
         intentFilter.addAction("com.bs360.volchangefromspeech");
         intentFilter.addAction("com.bs360.brichangefromspeech");
+        intentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
+        intentFilter.addAction("com.aios.openquickset");
+        intentFilter.addAction("com.aios.closequickset");
         registerReceiver(mRecieve, intentFilter);
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -199,6 +192,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
                 if(quickSetTip.getVisibility() == View.VISIBLE)
                     quickSetTip.setVisibility(View.INVISIBLE);
                 startTimerAfterNaviOpen();
+                isHomeDrawbleOpen = true;
             }
 
             @Override
@@ -208,6 +202,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
 
                 if(timer != null && closeDrawbleTimer != null)
                     closeDrawbleTimer.cancel();
+                isHomeDrawbleOpen = false;
             }
 
             @Override
@@ -218,7 +213,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         quickSetTip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawer.openDrawer(Gravity.LEFT);
+                openHomeDrawble();
             }
         });
 
@@ -226,7 +221,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         quickSetClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawer.closeDrawer(Gravity.LEFT);
+                closeHomeDrawble();
             }
         });
 
@@ -312,13 +307,24 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if(msg.what == EVENT_CLOSE_NAVIGATION)
-                closeDrawble();
+                closeHomeDrawble();
         }
     }
 
-    private void closeDrawble() {
+    /**
+     * 打开快捷菜单
+     */
+    private void closeHomeDrawble() {
         if(drawer != null)
             drawer.closeDrawer(Gravity.LEFT);
+    }
+
+    /**
+     * 关闭快捷菜单
+     */
+    private void openHomeDrawble() {
+        if(drawer != null)
+            drawer.openDrawer(Gravity.LEFT);
     }
 
     /**
@@ -379,10 +385,16 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
                 if(flag != 0) {
                     if(flag == 1) {
                         log_i("收到了按键传来的跳转到第0页的广播");
+                        if(isHomeDrawbleOpen)
+                            closeHomeDrawble();
+                        else
                         jumpToPage1();
                     }
                     else {
                         log_i("收到了按键传来的跳转到第1页的广播");
+                        if(isHomeDrawbleOpen)
+                            closeHomeDrawble();
+                        else
                         jumpToPage2();
                     }
                 }
@@ -392,10 +404,14 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             } else if (action.equals(SYNCMAP_FROM_SPEECH)) {
                 Log.i("ljwtest:", "收到的地图是" + intent.getStringExtra("maptype"));
                 Utils.setLocalMapType(intent.getStringExtra("maptype"), getApplicationContext());
-            } else if(action.equals("com.bs360.synclaunchervol") || action.equals("com.bs360.volchangefromspeech")) {
+            } else if(action.equals("android.media.VOLUME_CHANGED_ACTION")) {
                 initVoiceSeekbar();
             } else if(action.equals("com.bs360.synclauncherbri") || action.equals("com.bs360.brichangefromspeech")) {
-                initBrightSeekbar();
+//                initBrightSeekbar();
+            } else if(action.equals("com.aios.closequickset")) {
+                closeHomeDrawble();
+            } else if(action.equals("com.aios.openquickset")) {
+                openHomeDrawble();
             }
         }
     }
@@ -547,7 +563,9 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK) {
-            if(currentLevelPage == 0 && !level1_fragment.isLevel1Visible)
+            if(isHomeDrawbleOpen) {
+                closeHomeDrawble();
+            } else if(currentLevelPage == 0 && !level1_fragment.isLevel1Visible)
                 return true;
             else if(currentLevelPage == 1)
                 jumpToPage1();

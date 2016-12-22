@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.ljw.device3x.R;
+import com.ljw.device3x.common.CommonBroacastName;
 
 import java.lang.ref.WeakReference;
 
@@ -35,8 +36,8 @@ public class StatusBarBlueToothView extends ImageView{
         Log.i("ljwtest:", "StatusBarBlueToothView被新建了");
         bluetoothHandler = new BluetoothHandler(this);
         myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(myBluetoothAdapter.isEnabled())
-            this.setImageResource(R.mipmap.statusbar_bluetooth);
+//        if(myBluetoothAdapter.isEnabled())
+        this.setImageResource(R.mipmap.statusbar_bluetooth);
     }
 
 //    public StatusBarBlueToothView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -74,23 +75,10 @@ public class StatusBarBlueToothView extends ImageView{
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action) || BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED.equals(action)) {
-                int bluetoothState = myBluetoothAdapter.getState();
-                switch (bluetoothState) {
-                    case BluetoothAdapter.STATE_OFF:
-                        bluetoothHandler.sendEmptyMessage(STATE_OFF);
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_OFF:
-                        bluetoothHandler.sendEmptyMessage(STATE_OFF);
-                        break;
-                    case BluetoothAdapter.STATE_ON:
-                        bluetoothHandler.sendEmptyMessage(STATE_ON);
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_ON:
-                        bluetoothHandler.sendEmptyMessage(STATE_ON);
-                        break;
-                }
-            }
+            if (CommonBroacastName.BLUETOOTH_STATUSON.equals(action)) {
+                bluetoothHandler.sendEmptyMessage(STATE_ON);
+            } else
+                bluetoothHandler.sendEmptyMessage(STATE_OFF);
         }
     };
 
@@ -98,8 +86,8 @@ public class StatusBarBlueToothView extends ImageView{
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+        intentFilter.addAction(CommonBroacastName.BLUETOOTH_STATUSON);
+        intentFilter.addAction(CommonBroacastName.BLUETOOTH_STATUSOFF);
         getContext().registerReceiver(bluetoothReceive, intentFilter);
     }
 

@@ -53,7 +53,8 @@ public class WifiStateView extends LinearLayout{
                 //如果wifi没有连接成功，则显示wifi图标无连接的状�??
                 if (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED) {
                     Log.i("ljwtest:", "wifi已关闭");
-                    mobileStateView.openDataNetworkIfWifiIsClose();
+
+//                    mobileStateView.openDataNetworkIfWifiIsClose();
                 }
                 refreshButton();
 
@@ -96,7 +97,8 @@ public class WifiStateView extends LinearLayout{
                 if(wifiinfo != null) {
                     String name = deleteDoubleQuotation(wifiinfo.getSSID());
                     wifiName.setGravity(Gravity.CENTER);
-                    wifiName.setText(!TextUtils.isEmpty(name) ? name : "WLAN");
+                    Log.e("ljwtest:", "网络状态改变后的wifi名" + name);
+                    wifiName.setText((!TextUtils.isEmpty(name) && !"0x".equals(name)) ? name : "WLAN");
 //                    wifiName.setTextColor(context.getResources().getColor(R.color.white));
                 }
             }

@@ -89,13 +89,16 @@ public class StatusBarWifiStateView extends ImageView {
             //WifiManager.WIFI_STATE_CHANGED_ACTION
             Log.i(TAG, "onReceive " + action);
             if (action.equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
+                Log.e("ljwtest:", "WIFI_STATE_CHANGED_ACTION");
 
                 if (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED) {
                     mWifiHandler.sendEmptyMessage(LEVEL_NONE);
+                    Log.e("ljwtest:", "WIFI_STATE_CHANGED_ACTION  LEVEL_NONE");
                     return;
                 }
 
             } else if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+                Log.e("ljwtest:", "CONNECTIVITY_ACTION");
 
                 NetworkInfo netInfo = mCM.getActiveNetworkInfo();
 
@@ -103,20 +106,21 @@ public class StatusBarWifiStateView extends ImageView {
                     mWifiHandler.sendEmptyMessage(LEVEL_NONE);
                 } else if (netInfo != null && netInfo.getType() == ConnectivityManager.TYPE_WIFI && !netInfo.isConnected()) {
                     mWifiHandler.sendEmptyMessage(LEVEL_NONE);
-
                 }
+                Log.e("ljwtest:", "CONNECTIVITY_ACTION  LEVEL_NONE");
 
             } else if (action.equals(WifiManager.RSSI_CHANGED_ACTION)) {
-
+                Log.e("ljwtest:", "RSSI_CHANGED_ACTION");
                 if (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED) {
                     mWifiHandler.sendEmptyMessage(LEVEL_NONE);
+                    Log.e("ljwtest:", "RSSI_CHANGED_ACTION  LEVEL_NONE");
                     return;
+                } else {
+                    WifiInfo info = mWifiManager.getConnectionInfo();
+                    int level = WifiManager.calculateSignalLevel(info.getRssi(), LEVEL_DGREE);
+                    Log.e("ljwtest:", "wifi rssi " + info.getRssi());
+                    mWifiHandler.sendEmptyMessage(level);
                 }
-                WifiInfo info = mWifiManager.getConnectionInfo();
-
-                int level = WifiManager.calculateSignalLevel(info.getRssi(), LEVEL_DGREE);
-                Log.i(TAG, "wifi rssi " + info.getRssi());
-                mWifiHandler.sendEmptyMessage(level);
             }
         }
     };
@@ -142,9 +146,8 @@ public class StatusBarWifiStateView extends ImageView {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         IntentFilter mFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        // mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         mFilter.addAction(WifiManager.RSSI_CHANGED_ACTION);
-
         getContext().registerReceiver(mWifiStateReceiver, mFilter);
 
     }

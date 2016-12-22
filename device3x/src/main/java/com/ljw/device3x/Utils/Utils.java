@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.ljw.device3x.Activity.DeviceApplication;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -290,6 +292,23 @@ public class Utils {
         mContext.startActivity(intent);
         UITimer.getInstance().executeAppTask(new UITimerTask() , UITimer.DELAY_MIDDLE);
         return true;
+    }
+
+    //获取移动数据开关状态
+    public boolean getMobileDataStatus() {
+        ConnectivityManager mConnectivityManager  = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        String methodName = "getMobileDataEnabled";
+        Class cmClass = mConnectivityManager.getClass();
+        Boolean isOpen = null;
+
+        try {
+            Method method = cmClass.getMethod(methodName, null);
+
+            isOpen = (Boolean) method.invoke(mConnectivityManager, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isOpen;
     }
 
     /**
