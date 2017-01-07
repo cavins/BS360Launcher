@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ljw.device3x.R;
+import com.ljw.device3x.Utils.Utils;
+import com.ljw.device3x.common.AppPackageName;
 
 /**
  * Created by Administrator on 2016/9/7 0007.
@@ -67,6 +69,15 @@ public class FMStateView extends LinearLayout{
                     context.sendBroadcast(intent);
                     flag = 0;
                 }
+            }
+        });
+
+        imageView.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(Utils.getInstance().isInstalled(AppPackageName.FM_APP))
+                    Utils.getInstance().openApplication(AppPackageName.FM_APP);
+                return false;
             }
         });
     }

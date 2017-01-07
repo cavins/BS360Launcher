@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.Utils;
@@ -53,7 +54,6 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     private static final String SD_CARD_IS_OUT = "SD卡已拔出";
     private static final String SD_CARD_PATH = "/storage/sdcard1";
     private static final int EVENT_CLOSE_NAVIGATION = 0x100;
-    private MyGpsHardware myGpsHardware;
     /**
      * 发送TTS语音播报广播
      */
@@ -85,7 +85,6 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         notifyFMAndBt();
         /**注册监听系统亮度改变事件*/
         this.getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),true, BrightnessMode);
-
     }
 
     private void notifyFMAndBt() {
@@ -112,19 +111,19 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if(action.equals(Intent.ACTION_MEDIA_EJECT)){
-                Log.i("ljwtest:", "SD卡被拔出");
-                Intent tts = new Intent(AIOS_TTS_SPEAK);
-                tts.putExtra("text", SD_CARD_IS_OUT);
-                context.sendBroadcast(tts);
-            }else if(action.equals(Intent.ACTION_MEDIA_MOUNTED) && SD_CARD_PATH.equals(intent.getData().getPath())){
-                Log.i("ljwtest:", "SD卡已插入");
-                Intent tts = new Intent(AIOS_TTS_SPEAK);
-                tts.putExtra("text", SD_CARD_IS_IN);
-                context.sendBroadcast(tts);
-            } else if(action.equals("android.intent.action.MEDIA_REMOVED")|| action.equals("android.intent.action.ACTION_MEDIA_UNMOUNTED")) {
-                Log.i("ljwtest:", "SD卡已卸载");
-            }
+                Log.i("ljwtest:", "不是关机");
+                if(action.equals(Intent.ACTION_MEDIA_EJECT) && SD_CARD_PATH.equals(intent.getData().getPath())){
+                    Intent tts = new Intent(AIOS_TTS_SPEAK);
+                    tts.putExtra("text", SD_CARD_IS_OUT);
+                    context.sendBroadcast(tts);
+                }else if(action.equals(Intent.ACTION_MEDIA_MOUNTED) && SD_CARD_PATH.equals(intent.getData().getPath())){
+                    Log.i("ljwtest:", "SD卡已插入");
+                    Intent tts = new Intent(AIOS_TTS_SPEAK);
+                    tts.putExtra("text", SD_CARD_IS_IN);
+                    context.sendBroadcast(tts);
+                } else if(action.equals("android.intent.action.MEDIA_REMOVED")|| action.equals("android.intent.action.ACTION_MEDIA_UNMOUNTED")) {
+                    Log.i("ljwtest:", "SD卡已卸载");
+                }
         }
     }
 
@@ -225,15 +224,6 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             }
         });
 
-
-        myGpsHardware = new MyGpsHardware();
-        myGpsHardware.open(this, new MyGpsListener() {
-            @Override
-            public void onLocationChanged(MyLocation location) {
-                log_i(location.toString());
-                level1_fragment.displayDirectionAndSpeed(location.course, location.speed);
-            }
-        });
 
         verticalViewPager = (VerticalViewPager)findViewById(R.id.vertical_viewpager);
         verticalViewPager.setAdapter(new ContentFragmentAdapter.Holder(getSupportFragmentManager())
@@ -364,7 +354,6 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         super.onDestroy();
 //        stopLocationService();
         unregisterReceiver(mRecieve);
-        myGpsHardware.close();
     }
 
     @Override

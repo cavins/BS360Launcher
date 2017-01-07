@@ -89,21 +89,26 @@ public class WifiStateView extends LinearLayout{
 //                int level = WifiManager.calculateSignalLevel(info.getRssi(), LEVEL_DGREE);
 //                Log.i(TAG, "wifi rssi " + info.getRssi());
 //                mWifiHandler.sendEmptyMessage(level);
+                changeWifiDisplay();
             }
 
             if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-                WifiManager wifimanager = (WifiManager)getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                WifiInfo wifiinfo = wifimanager.getConnectionInfo();
-                if(wifiinfo != null) {
-                    String name = deleteDoubleQuotation(wifiinfo.getSSID());
-                    wifiName.setGravity(Gravity.CENTER);
-                    Log.e("ljwtest:", "网络状态改变后的wifi名" + name);
-                    wifiName.setText((!TextUtils.isEmpty(name) && !"0x".equals(name)) ? name : "WLAN");
-//                    wifiName.setTextColor(context.getResources().getColor(R.color.white));
-                }
+                changeWifiDisplay();
             }
         }
     };
+
+    private void changeWifiDisplay() {
+        WifiManager wifimanager = (WifiManager)getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiinfo = wifimanager.getConnectionInfo();
+        if(wifiinfo != null) {
+            String name = deleteDoubleQuotation(wifiinfo.getSSID());
+            wifiName.setGravity(Gravity.CENTER);
+            Log.e("ljwtest:", "网络状态改变后的wifi名" + name);
+            wifiName.setText((!TextUtils.isEmpty(name) && !"0x".equals(name)) ? name : "WLAN");
+//                    wifiName.setTextColor(context.getResources().getColor(R.color.white));
+        }
+    }
 
     private String deleteDoubleQuotation(String s) {
         if(!TextUtils.isEmpty(s)) {
@@ -182,7 +187,6 @@ public class WifiStateView extends LinearLayout{
         mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         //注册广播接收�?
         getContext().registerReceiver(mWifiStateReceiver, mFilter);
-
     }
 
     @Override

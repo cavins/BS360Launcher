@@ -10,6 +10,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -115,12 +116,15 @@ public class StatusBarWifiStateView extends ImageView {
                     mWifiHandler.sendEmptyMessage(LEVEL_NONE);
                     Log.e("ljwtest:", "RSSI_CHANGED_ACTION  LEVEL_NONE");
                     return;
-                } else {
-                    WifiInfo info = mWifiManager.getConnectionInfo();
-                    int level = WifiManager.calculateSignalLevel(info.getRssi(), LEVEL_DGREE);
-                    Log.e("ljwtest:", "wifi rssi " + info.getRssi());
-                    mWifiHandler.sendEmptyMessage(level);
                 }
+                WifiInfo info = mWifiManager.getConnectionInfo();
+//                NetworkInfo networkInfo = mCM.getActiveNetworkInfo();
+                int level = WifiManager.calculateSignalLevel(info.getRssi(), LEVEL_DGREE);
+                String wifiName = info.getSSID();
+                Log.e("ljwtest:", "wifi rssi " + info.getRssi() + "wifi名是" + info.getSSID());
+//                if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI)
+                if(!TextUtils.isEmpty(wifiName) || !wifiName.contains("0x"))
+                    mWifiHandler.sendEmptyMessage(level);
             }
         }
     };

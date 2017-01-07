@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -39,6 +40,9 @@ import com.ljw.device3x.adapter.pagerAdapter;
 import com.ljw.device3x.common.AppPackageName;
 import com.ljw.device3x.customview.CubeOutTransformer;
 import com.ljw.device3x.customview.MyViewPager;
+import com.ljw.device3x.gpscontrol.MyGpsHardware;
+import com.ljw.device3x.gpscontrol.MyGpsListener;
+import com.ljw.device3x.gpscontrol.MyLocation;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -47,7 +51,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/5/27 0027.
  */
-public class Level1_Fragment extends Fragment {
+public class Level1_Fragment extends Fragment implements MyGpsListener{
     private Context context;
     private List<GridView> gridViewList;//装载滑动的GridView数据
     private LinearLayout pagerLayout, carLayout, limitlayout;//ViewPager
@@ -58,6 +62,8 @@ public class Level1_Fragment extends Fragment {
     private TextView speed;//GPS速度
     private TextView limitSpeed;//限速数字
     private FrameLayout weatherFrame;
+    private MyGpsHardware myGpsHardware;
+
     public boolean isLevel1Visible = false;//一级菜单第二页是否显示
 
 
@@ -114,10 +120,12 @@ public class Level1_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 //        log_i("onCreateView" + "线程状态" + changeRoadImage.isAlive());
-        context = getActivity();
+        context = getActivity().getApplicationContext();
         View rootView = inflater.inflate(R.layout.level1_menu, null);
         initData(rootView);
         regisReceive();
+        myGpsHardware = new MyGpsHardware();
+        myGpsHardware.open(context, this);
         return rootView;
     }
 
@@ -130,6 +138,11 @@ public class Level1_Fragment extends Fragment {
         edogFilter.addAction(EdogBrocastIntent.COLECTION_WARNING);
         getActivity().registerReceiver(mRecieve, edogFilter);
 
+    }
+
+    @Override
+    public void onLocationChanged(MyLocation location) {
+        displayDirectionAndSpeed(location.course, location.speed);
     }
 
     /**
@@ -556,33 +569,39 @@ public class Level1_Fragment extends Fragment {
 //            Log.i("正西", "ss");
 //            derecLayout.setBackgroundResource(com.rayee.administrator.buttonview.R.mipmap.direction_west);
 //            derecLayout.setGravity(Gravity.CENTER);
-            directionText.setText(context.getResources().getString(R.string.north));
+//            directionText.setText(context.getResources().getString(R.string.north));
+            displayDirection(context.getResources().getString(R.string.north));
         }
 
         else if((bearing > 5 && bearing < 85)) {
-            directionText.setText(context.getResources().getString(R.string.northeast));
+//            directionText.setText(context.getResources().getString(R.string.northeast));
+            displayDirection(context.getResources().getString(R.string.northeast));
         }
 
         else if (bearing > 85 && bearing <= 95) {
 //            log_i("正东");
 //            derecLayout.setBackgroundResource(com.rayee.administrator.buttonview.R.mipmap.direction_south);
 //            derecLayout.setGravity(Gravity.CENTER);
-            directionText.setText(context.getResources().getString(R.string.east));
+//            directionText.setText(context.getResources().getString(R.string.east));
+            displayDirection(context.getResources().getString(R.string.east));
         }
 
         else if(bearing > 95 && bearing <= 175 ) {
-            directionText.setText(context.getResources().getString(R.string.southeast));
+//            directionText.setText(context.getResources().getString(R.string.southeast));
+            displayDirection(context.getResources().getString(R.string.southeast));
         }
 
         else if (bearing > 175 && bearing <= 185) {
 //            log_i("正南");
 //            derecLayout.setBackgroundResource(com.rayee.administrator.buttonview.R.mipmap.direction_east);
 //            derecLayout.setGravity(Gravity.CENTER);
-            directionText.setText(context.getResources().getString(R.string.south));
+//            directionText.setText(context.getResources().getString(R.string.south));
+            displayDirection(context.getResources().getString(R.string.south));
         }
 
         else if(bearing > 185 && bearing <= 265) {
-            directionText.setText(context.getResources().getString(R.string.southwest));
+//            directionText.setText(context.getResources().getString(R.string.southwest));
+            displayDirection(context.getResources().getString(R.string.southwest));
 //            log_i("西南");
         }
 
@@ -590,11 +609,13 @@ public class Level1_Fragment extends Fragment {
 //            log_i("正西");
 //            derecLayout.setBackgroundResource(com.rayee.administrator.buttonview.R.mipmap.direction_north);
 //            derecLayout.setGravity(Gravity.CENTER);
-            directionText.setText(context.getResources().getString(R.string.west));
+//            directionText.setText(context.getResources().getString(R.string.west));
+            displayDirection(context.getResources().getString(R.string.west));
         }
 
         else if(bearing > 275 && bearing <= 355) {
-            directionText.setText(context.getResources().getString(R.string.northwest));
+//            directionText.setText(context.getResources().getString(R.string.northwest));
+            displayDirection(context.getResources().getString(R.string.northwest));
 //            log_i("西北");
         }
 
@@ -603,8 +624,27 @@ public class Level1_Fragment extends Fragment {
     /**
      * 根据GPS信息显示速度
      */
+    private void displayDirection(String s) {
+        try {
+            if(directionText != null)
+                directionText.setText(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 根据GPS信息显示速度
+     */
     private void displayGpsSpeed(float speedValue) {
-        speed.setText(String.format("%.2f", speedValue));
+        Log.e("ljwtest:", "全薪版本刷新的速度值" + speedValue);
+        try {
+            if(speed != null)
+                speed.setText(String.format("%.2f", speedValue));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("ljwtest", "GPS刷新异常" + e.toString());
+        }
     }
 
     /**
@@ -640,6 +680,7 @@ public class Level1_Fragment extends Fragment {
         super.onDestroy();
         log_i("onDestroy");
         isRunning = true;
+        myGpsHardware.close();
 //        changeRoadImage = null;
     }
 }

@@ -25,10 +25,10 @@ import java.lang.ref.WeakReference;
 
 public class MobileDataIOView extends ImageView{
 
-    private static final int DATA_ACTIVITY_NONE = R.drawable.ct_stat_sys_signal_not_inout;
-    private static final int DATA_ACTIVITY_IN = R.drawable.ct_stat_sys_signal_in;
-    private static final int DATA_ACTIVITY_OUT = R.drawable.ct_stat_sys_signal_out;
-    private static final int DATA_ACTIVITY_INOUT = R.drawable.ct_stat_sys_signal_inout;
+    private static final int DATA_ACTIVITY_NONE = R.mipmap.data_none;
+    private static final int DATA_ACTIVITY_IN = R.mipmap.data_in;
+    private static final int DATA_ACTIVITY_OUT = R.mipmap.data_out;
+    private static final int DATA_ACTIVITY_INOUT = R.mipmap.data_inout;
 
     private final static String ACTION_SIM_STATE_CHANGED = "android.intent.action.SIM_STATE_CHANGED";
 
@@ -115,7 +115,7 @@ public class MobileDataIOView extends ImageView{
 //            else if(ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
 //
 //            }
-            else if("com.launcher.changeiofromstrength".equals(action) || ConnectivityManager.CONNECTIVITY_ACTION.equals(action)) {
+            else if("com.launcher.changeiofromstrength".equals(action) || ConnectivityManager.CONNECTIVITY_ACTION.equals(action) || WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
                 mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                 if (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED && Utils.getInstance().getMobileDataStatus()) {
                     Log.e("ljwtest:", "mWifiManager.getWifiState()" + mWifiManager.getWifiState());
@@ -133,6 +133,7 @@ public class MobileDataIOView extends ImageView{
         super.onAttachedToWindow();
         IntentFilter intentFilter = new IntentFilter(NOTIFY_LAUNCHER_CHANGEDATAIO);
         intentFilter.addAction(SET_LAUNCHER_CHANGEDATAIO_VISIBLE);
+        intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.addAction("com.launcher.changeiofromstrength");
         context.registerReceiver(MobileDataIOReceive, intentFilter);

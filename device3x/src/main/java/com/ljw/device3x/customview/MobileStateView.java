@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,6 +22,9 @@ import com.ljw.device3x.common.CommonBroacastName;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Handler;
 
 /**
  * Created by Administrator on 2016/8/19 0019.
@@ -31,6 +35,9 @@ public class MobileStateView extends LinearLayout {
     private ImageView imageView;
     private TextView textView;
     private Context context;
+    private Timer timer;
+    private static final int READY_TO_CHANGE_MOBILESTATUS = 0x001;
+
     private static final String NETWORK_CHANGE = "android.intent.action.ANY_DATA_STATE";
     private static final String MY_OPEN_MOBILE = "ljw_open_mibiledata";
     private static final String MY_ASK_MOBILE = "ljw_ask_mibiledata";
@@ -54,9 +61,10 @@ public class MobileStateView extends LinearLayout {
         imageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ljwtest:", "getMobileDataStatus():" + getMobileDataStatus());
+                Log.i("ljwtestmobile:", "点击");
                 notifyToChangeMobile(MY_OPEN_MOBILE, context, getMobileDataStatus() ? 1 : 0);
-                refreshButton();
+//                Log.i("ljwtestmobile:", "getMobileDataStatus():" + getMobileDataStatus());
+                changeMobileDataStatusIfWifiConnected();
             }
         });
 
@@ -69,6 +77,14 @@ public class MobileStateView extends LinearLayout {
                 return false;
             }
         });
+    }
+
+    private void changeMobileDataStatusIfWifiConnected () {
+//        NetworkInfo activeInfo = connectivityManager.getActiveNetworkInfo();
+//        String name = activeInfo.getTypeName();
+
+//        if(activeInfo != null && activeInfo.getType()==ConnectivityManager.TYPE_WIFI)
+            startUpCount();
     }
 
     //获取移动数据开关状态
@@ -115,10 +131,13 @@ public class MobileStateView extends LinearLayout {
     private BroadcastReceiver MobileDataRecieve = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.i("ljwtestmobile:", action);
             if (SYSTEM_MOBILE_STATE.equals(intent.getAction())) {
+                Log.i("ljwtestmobile:", "自定义通知：移动网络已改变");
                 refreshButton();
             } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
-                Log.i("ljwtest:", "移动网络已改变");
+                Log.i("ljwtestmobile:", "系统通知：移动网络已改变");
                 refreshButton();
             }
         }
@@ -127,6 +146,30 @@ public class MobileStateView extends LinearLayout {
     public void openDataNetworkIfWifiIsClose() {
         if(!getMobileDataStatus())
             notifyToChangeMobile(MY_OPEN_MOBILE, context, 0);
+    }
+
+    private android.os.Handler DelayToChangeMobileStatusHandler = new android.os.Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+        }
+    };
+
+    private void startUpCount() {
+        timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+//                Log.i("ljwtestmobile:", "changeMobileDataStatusIfWifiConnected:" + getMobileDataStatus());
+                DelayToChangeMobileStatusHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshButton();
+                    }
+                });
+            }
+        }, 2000, 2000);
     }
 
     @Override
@@ -141,5 +184,7 @@ public class MobileStateView extends LinearLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         getContext().unregisterReceiver(MobileDataRecieve);
+        if(timer != null)
+            timer.cancel();
     }
 }

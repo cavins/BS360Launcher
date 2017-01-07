@@ -41,7 +41,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -57,8 +58,7 @@
 
             <com.ljw.device3x.customview.FMStateView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="60dp">
+                android:layout_height="wrap_content">
             </com.ljw.device3x.customview.FMStateView>
 
             <!--<LinearLayout-->
@@ -83,7 +83,7 @@
             <com.ljw.device3x.customview.BluetoothStateView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="60dp">
+                android:layout_marginLeft="65dp">
             </com.ljw.device3x.customview.BluetoothStateView>
         </LinearLayout>
     </LinearLayout>

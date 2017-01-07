@@ -127,17 +127,17 @@ public class StatusBarGPRSStateView extends ImageView{
             super.handleMessage(msg);
             if(mView.get() == null)
                 return;
-
             StatusBarGPRSStateView view = mView.get();
-            if(msg.what >= -96)
-                view.setImageResource(R.mipmap.gprs_4);
-            else if(msg.what >= -106)
-                view.setImageResource(R.mipmap.gprs_3);
-            else if(msg.what >= -116)
-                view.setImageResource(R.mipmap.gprs_2);
-            else if(msg.what >= -120)
-                view.setImageResource(R.mipmap.gprs_1);
-            else
+            if(isSimCardExist) {
+                if(msg.what >= -96)
+                    view.setImageResource(R.mipmap.gprs_4);
+                else if(msg.what >= -106)
+                    view.setImageResource(R.mipmap.gprs_4);
+                else if(msg.what >= -116)
+                    view.setImageResource(R.mipmap.gprs_4);
+                else if(msg.what >= -999)
+                    view.setImageResource(R.mipmap.gprs_4);
+            } else
                 view.setImageResource(R.mipmap.gprs_none);
 
 //            if (mark == 2) {//电信3g信号强度的分类，可以按照ui自行划分等级

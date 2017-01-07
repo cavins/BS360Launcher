@@ -74,7 +74,7 @@ public class NetworkTypeView extends ImageView{
                 }
                 break;
                 case -1:
-                    view.setVisibility(GONE);
+                    view.setVisibility(INVISIBLE);
 
             }
         }
