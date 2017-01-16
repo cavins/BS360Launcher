@@ -111,11 +111,12 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-                Log.i("ljwtest:", "不是关机");
-                if(action.equals(Intent.ACTION_MEDIA_EJECT) && SD_CARD_PATH.equals(intent.getData().getPath())){
-                    Intent tts = new Intent(AIOS_TTS_SPEAK);
-                    tts.putExtra("text", SD_CARD_IS_OUT);
-                    context.sendBroadcast(tts);
+            if(action.equals(Intent.ACTION_MEDIA_EJECT) && SD_CARD_PATH.equals(intent.getData().getPath())){
+                    if(Utils.getBoot(context) == Utils.NOT_BOOT) {
+                        Intent tts = new Intent(AIOS_TTS_SPEAK);
+                        tts.putExtra("text", SD_CARD_IS_OUT);
+                        context.sendBroadcast(tts);
+                    }
                 }else if(action.equals(Intent.ACTION_MEDIA_MOUNTED) && SD_CARD_PATH.equals(intent.getData().getPath())){
                     Log.i("ljwtest:", "SD卡已插入");
                     Intent tts = new Intent(AIOS_TTS_SPEAK);
@@ -393,7 +394,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             } else if (action.equals(SYNCMAP_FROM_SPEECH)) {
                 Log.i("ljwtest:", "收到的地图是" + intent.getStringExtra("maptype"));
                 Utils.setLocalMapType(intent.getStringExtra("maptype"), getApplicationContext());
-            } else if(action.equals("android.media.VOLUME_CHANGED_ACTION")) {
+            } else if(action.equals("android.media.VOLUME_CHANGED_ACTION") || action.equals("com.bs360.synclaunchervol")) {
                 initVoiceSeekbar();
             } else if(action.equals("com.bs360.synclauncherbri") || action.equals("com.bs360.brichangefromspeech")) {
 //                initBrightSeekbar();
@@ -514,27 +515,42 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
                 // TODO Auto-generated method stub
                 Intent intent1 = new Intent("com.bs360.syncsettingvol");
                 sendBroadcast(intent1);
+
+                int syncValue = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                syncAIOSVol(syncValue);
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar arg0) {
-                // TODO Auto-generated method stub
-
+                Log.i("ljwvolumetest", "onStartTrackingTouch");
+//                if(mAudioManager.isStreamMute(AudioManager.STREAM_MUSIC)) {
+//                    Log.i("ljwvolumetest", "当前媒体音已静音");
+                    mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+//                }
             }
 
             @Override
             public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
                 // TODO Auto-generated method stub
                 mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, arg1, 0);
-                mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM , arg1, 0);
-                mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION , arg1, 0);
-                mAudioManager.setStreamVolume(AudioManager.STREAM_RING , arg1, 0);
-                mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM , arg1, 0);
-                mAudioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL , arg1, 0);
-                mAudioManager.setStreamVolume(AudioManager.STREAM_DTMF , arg1, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM , arg1, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION , arg1, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_RING , arg1, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM , arg1, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL , arg1, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_DTMF , arg1, 0);
                 voiceSeekbar.setProgress(arg1);
             }
         });
+    }
+
+    /***
+     * 同步语音的音量
+     */
+    private void syncAIOSVol(int volume) {
+        Intent intent = new Intent("com.ljw.rayee.syncsystemvol");
+        intent.putExtra("currentvolume", volume);
+        sendBroadcast(intent);
     }
 
 

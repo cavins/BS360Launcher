@@ -34,6 +34,10 @@ public class Utils {
     private static Utils mUtil;
     private final String ACTION_LAUNCHER_NOTIFY = "action_launcher_notify";//changed home icon from launcher
 
+    public static final int NOT_BOOT = 1;
+    public static final int BOOT = 2;
+    private static final String ISFIRST_BOOT = "isfirstboot";
+
     private Context mContext;
 
     public Utils() {
@@ -73,6 +77,18 @@ public class Utils {
     public static String getLatitude(Context context) {
         SharedPreferences sp = context.getSharedPreferences("local", Context.MODE_PRIVATE);
         return sp.getString("latitude", "");
+    }
+
+    public static void setBoot(final Context context, int value) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(ISFIRST_BOOT,Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = sharedPreferences.edit();
+        ed.putInt(ISFIRST_BOOT, value);
+        ed.commit();
+    }
+
+    public static int getBoot(final Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(ISFIRST_BOOT,Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(ISFIRST_BOOT, BOOT);
     }
 
     /**

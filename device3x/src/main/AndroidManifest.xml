@@ -21,10 +21,18 @@
         </activity>
 
         <receiver android:name=".Activity.WindowsActivity$UsbBroadCastReceiver">
-            <intent-filter android:priority="1000">
+            <intent-filter >
                 <action android:name="android.intent.action.MEDIA_MOUNTED"/>
                 <action android:name="android.intent.action.MEDIA_EJECT" />
                 <data android:scheme="file"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receiver.BootReceiver">
+            <intent-filter android:priority="1000">
+                <action android:name="com.conqueror.action.jw.CompleteBoot"/>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+                <action android:name="com.ljw.getbootvalue" />
             </intent-filter>
         </receiver>
 
