@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.Utils;
+import com.ljw.device3x.Utils.WeatherUtils;
 import com.ljw.device3x.adapter.ContentFragmentAdapter;
 import com.ljw.device3x.common.CommonBroacastName;
 import com.ljw.device3x.gpscontrol.MyGpsHardware;
@@ -533,7 +534,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
                 // TODO Auto-generated method stub
                 mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, arg1, 0);
-//                mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM , arg1, 0);
+                mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM , arg1, 0);
 //                mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION , arg1, 0);
 //                mAudioManager.setStreamVolume(AudioManager.STREAM_RING , arg1, 0);
 //                mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM , arg1, 0);

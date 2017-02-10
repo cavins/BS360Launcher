@@ -74,18 +74,27 @@
                     </FrameLayout>
 
                     <ImageView
+                        android:id="@+id/xxxxxx"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@mipmap/car"
                         android:layout_marginTop="30dp"
                         android:layout_weight="1"/>
-
-                    <ImageView
-                        android:id="@+id/roadright"
+                    <FrameLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/rightroad_1"
-                        android:layout_weight="1"/>
+                        android:layout_height="wrap_content">
+                        <com.ljw.device3x.customview.WindowsWeaDatePlugin
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|top"></com.ljw.device3x.customview.WindowsWeaDatePlugin>
+                        <ImageView
+                            android:id="@+id/roadright"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@mipmap/rightroad_1"
+                            android:layout_weight="1"/>
+                    </FrameLayout>
+
                 </LinearLayout>
 
                 <!--方向时速切换等-->

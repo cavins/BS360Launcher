@@ -9,6 +9,7 @@ import android.content.Context;
 public class DeviceApplication extends Application{
 
     private static Context mContext;
+    public static String city = "";
 
     public static Context getContext() {
         if (mContext == null) {
